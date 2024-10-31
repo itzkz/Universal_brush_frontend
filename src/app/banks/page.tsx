@@ -1,17 +1,12 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import {Button} from "antd";
-import {listQuestionBankVoByPageUsingPost} from "@/api/questionBankController";
 
 export default function Home() {
-  listQuestionBankVoByPageUsingPost({}).then((res) => {
-    console.log(res);
-  });
-
   return (
     <main className={styles.main}>
       <div className={styles.description}>
-        <Button type="primary">测试ant按钮</Button>
+        <Button type="primary">题库按钮</Button>
         <p>
           Get started by editing&nbsp;
           <code className={styles.code}>src/app/page.tsx</code>
