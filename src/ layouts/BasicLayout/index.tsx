@@ -6,13 +6,18 @@ import {
 } from "@ant-design/icons";
 import { ProLayout } from "@ant-design/pro-components";
 import { Dropdown, Input } from "antd";
-import React from "react";
+import React, {useState} from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import "./index.css";
 import GlobalFooter from "@/components/GlobalFooter";
 import menus from "../../../config/menus";
-import {listQuestionBankVoByPageUsingPost} from "@/api/questionBankController";
+import { RootState } from "@/stores";
+import { useSelector } from "react-redux";
+import Image from "next/image";
+import getAccessibleMenus from "@/access/menuAccess";
+import MdViewer from "@/components/MdViewer";
+import MdEditor from "@/components/MdEditor";
 
 const SearchInput = () => {
   return (
@@ -43,10 +48,8 @@ interface Props {
 }
 
 export default function BasicLayout({ children }: Props) {
-  listQuestionBankVoByPageUsingPost({}).then((res) => {
-    console.log(res);
-  });
-
+    const [text, setText] = useState<string>('');
+  const loginUser = useSelector((state: RootState) => state.loginUser);
   const pathname = usePathname();
   return (
     <div
@@ -59,14 +62,20 @@ export default function BasicLayout({ children }: Props) {
       <ProLayout
         title="万能刷题平台"
         layout="top"
-        prefixCls="my-prefix"
+        logo={
+          <Image
+              src="/assets/刷.png"
+              height={32}
+              width={32}
+              alt="万能刷网站 - zkz"
+          />}
         location={{
           pathname,
         }}
         avatarProps={{
-          src: "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg",
+          src: loginUser.userAvatar || "/assets/刷.png",
           size: "small",
-          title: "zkz",
+          title: loginUser.userName || "万能刷",
           render: (props, dom) => {
             return (
               <Dropdown
@@ -106,7 +115,7 @@ export default function BasicLayout({ children }: Props) {
           return <GlobalFooter></GlobalFooter>;
         }}
         menuDataRender={() => {
-          return menus;
+          return getAccessibleMenus(loginUser,menus);
         }}
         // 菜单渲染
         menuItemRender={(item, dom) => (
@@ -115,6 +124,8 @@ export default function BasicLayout({ children }: Props) {
           </Link>
         )}
       >
+          <MdEditor value={text} onChange={setText} />
+          <MdViewer value={text} />
         {children}
       </ProLayout>
     </div>
