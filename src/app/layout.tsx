@@ -7,12 +7,14 @@ import { Provider, useDispatch } from "react-redux";
 import { getLoginUserUsingGet } from "@/api/userController";
 import { setLoginUser } from "@/stores/loginUser";
 import AccessLayout from "@/access/AccessLayout";
+import { useRouter } from "next/navigation";
 
 const InitLayout: React.FC<
   Readonly<{
     children: React.ReactNode;
   }>
 > = ({ children }) => {
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   // 初始化全局用户状态
   const doInitLoginUser = useCallback(async () => {
@@ -21,6 +23,7 @@ const InitLayout: React.FC<
     if (res.data) {
       dispatch(setLoginUser(res.data));
     } else {
+      router.push("/user/login");
     }
   }, [dispatch]);
   useEffect(() => {
