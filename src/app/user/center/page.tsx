@@ -1,88 +1,70 @@
 "use client";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { LoginForm, ProFormText } from "@ant-design/pro-components";
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import {useRouter} from "next/navigation";
-import {AppDispatch} from "@/stores";
-import {useDispatch} from "react-redux";
-import {ProForm} from "@ant-design/pro-form/lib";
-import {userLoginUsingPost} from "@/api/userController";
-import {message} from "antd";
-import {setLoginUser} from "@/stores/loginUser";
+import { Avatar, Card, Col, Row } from "antd";
+import { useSelector } from "react-redux";
+import { RootState } from "@/stores";
+import Title from "antd/es/typography/Title";
+import Paragraph from "antd/es/typography/Paragraph";
+import { useState } from "react";
+import CalendarChart from "@/app/user/center/components/CalendarChart";
+import "./index.css";
 
-const UserCenterPage: React.FC = () => {
+/**
+ * 用户中心页面
+ * @constructor
+ */
+export default function UserCenterPage() {
+    // 获取登录用户信息
+    const loginUser = useSelector((state: RootState) => state.loginUser);
+    // 便于复用，新起一个变量
+    const user = loginUser;
+    // 控制菜单栏的 Tab 高亮
+    const [activeTabKey, setActiveTabKey] = useState<string>("record");
 
-  const [form] = ProForm.useForm();
-  const dispatch = useDispatch<AppDispatch>();
-  const router = useRouter();
-
-
-  const doSubmit = async (values: API.UserLoginRequest) => {
-    try {
-      const res = await userLoginUsingPost(values);
-      if (res.data) {
-        message.success("登录成功");
-        // 保存用户登录状态
-        dispatch(setLoginUser(res.data));
-        router.replace("/");
-        form.resetFields();
-      }
-    } catch (e) {
-      message.error("登录失败，" + e.message);
-    }
-  };
-
-  return (
-      <div id="UserCenterPage">
-    <LoginForm
-        form={form}
-      logo={<Image src="/assets/刷.png" alt="万能刷" width={100} height={50} />}
-      title="万能刷"
-      subTitle="最适合你的刷题平台"
-        onFinish={doSubmit}
-    >
-      <ProFormText
-        name="userAccount"
-        fieldProps={{
-          size: "large",
-          prefix: <UserOutlined />,
-        }}
-        placeholder={"请输入用户账号"}
-        rules={[
-          {
-            required: true,
-            message: "请输入用户账号!",
-          },
-        ]}
-      />
-      <ProFormText.Password
-        name="userPassword"
-        fieldProps={{
-          size: "large",
-          prefix: <LockOutlined />,
-        }}
-        placeholder={"请输入密码"}
-        rules={[
-          {
-            required: true,
-            message: "请输入密码！",
-          },
-        ]}
-      />
-      <div
-        style={{
-          marginBlockEnd: 24,
-          textAlign: "end",
-        }}
-      >
-        还没有账号？
-        <Link href={"/user/register"}>去注册</Link>
-      </div>
-    </LoginForm>
-      </div>
-  );
-
-};
-export default UserCenterPage;
+    return (
+        <div id="userCenterPage" className="max-width-content">
+            <Row gutter={[16, 16]}>
+                <Col xs={24} md={6}>
+                    <Card style={{ textAlign: "center" }}>
+                        <Avatar src={user.userAvatar} size={72} />
+                        <div style={{ marginBottom: 16 }} />
+                        <Card.Meta
+                            title={
+                                <Title level={4} style={{ marginBottom: 0 }}>
+                                    {user.userName}
+                                </Title>
+                            }
+                            description={
+                                <Paragraph type="secondary">{user.userProfile}</Paragraph>
+                            }
+                        />
+                    </Card>
+                </Col>
+                <Col xs={24} md={18}>
+                    <Card
+                        tabList={[
+                            {
+                                key: "record",
+                                label: "刷题记录",
+                            },
+                            {
+                                key: "others",
+                                label: "其他",
+                            },
+                        ]}
+                        activeTabKey={activeTabKey}
+                        onTabChange={(key: string) => {
+                            setActiveTabKey(key);
+                        }}
+                    >
+                        {activeTabKey === "record" && (
+                            <>
+                                <CalendarChart />
+                            </>
+                        )}
+                        {activeTabKey === "others" && <>bbb</>}
+                    </Card>
+                </Col>
+            </Row>
+        </div>
+    );
+}

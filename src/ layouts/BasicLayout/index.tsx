@@ -2,7 +2,7 @@
 import {
   GithubFilled,
   LogoutOutlined,
-  SearchOutlined,
+  SearchOutlined, UserOutlined,
 } from "@ant-design/icons";
 import { ProLayout } from "@ant-design/pro-components";
 import { Dropdown, Input, message } from "antd";
@@ -19,30 +19,7 @@ import { userLogoutUsingPost } from "@/api/userController";
 import { setLoginUser } from "@/stores/loginUser";
 import { usePathname, useRouter } from "next/navigation";
 import { DEFAULT_USER } from "@/constants/user";
-
-const SearchInput = () => {
-  return (
-    <div
-      key="SearchOutlined"
-      aria-hidden
-      style={{
-        display: "flex",
-        alignItems: "center",
-        marginInlineEnd: 24,
-      }}
-      onMouseDown={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-      }}
-    >
-      <Input
-        prefix={<SearchOutlined />}
-        placeholder="搜索题目"
-        variant="borderless"
-      />
-    </div>
-  );
-};
+import SearchInput from "@/ layouts/BasicLayout/components/SearchInput";
 
 interface Props {
   children: React.ReactNode;
@@ -107,6 +84,11 @@ export default function BasicLayout({ children }: Props) {
               <Dropdown
                 menu={{
                   items: [
+                    {
+                      key: "userCenter",
+                      icon: <UserOutlined />,
+                      label: "个人中心",
+                    },
                     {
                       key: "logout",
                       icon: <LogoutOutlined />,
