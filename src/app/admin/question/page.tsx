@@ -2,6 +2,7 @@
 import CreateModal from "./components/CreateModal";
 import UpdateModal from "./components/UpdateModal";
 import {
+    batchDeleteQuestionsUsingPost,
     deleteQuestionUsingPost,
     listQuestionByPageUsingPost,
 } from "@/api/questionController";
@@ -76,19 +77,19 @@ const QuestionAdminPage: React.FC = () => {
      *
      * @param questionIdList
      */
-    // const handleBatchDelete = async (questionIdList: number[]) => {
-    //     const hide = message.loading("正在操作");
-    //     try {
-    //         await batchDeleteQuestionsUsingPost({
-    //             questionIdList,
-    //         });
-    //         hide();
-    //         message.success("操作成功");
-    //     } catch (error: any) {
-    //         hide();
-    //         message.error("操作失败，" + error.message);
-    //     }
-    // };
+    const handleBatchDelete = async (questionIdList: number[]) => {
+        const hide = message.loading("正在操作");
+        try {
+            await batchDeleteQuestionsUsingPost({
+                questionIdList,
+            });
+            hide();
+            message.success("操作成功");
+        } catch (error: any) {
+            hide();
+            message.error("操作失败，" + error.message);
+        }
+    };
 
     /**
      * 表格列配置
@@ -273,7 +274,7 @@ const QuestionAdminPage: React.FC = () => {
                                 description="你确定要删除这些题目么？"
                                 onConfirm={() => {
                                     // 批量删除
-                                    // handleBatchDelete(selectedRowKeys as number[]);
+                                    handleBatchDelete(selectedRowKeys as number[]);
                                 }}
                                 okText="确认"
                                 cancelText="取消"
